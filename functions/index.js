@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const gcs = require('@google-cloud/storage')();
 var os = require('os');
 const path = require('path');
+const spawn = require('child-process-promise').spawn;
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
@@ -20,7 +21,9 @@ exports.onFileChange = functions.storage.object().onFinalize(event => {
   console.log('This is my link ' + event.selfLink);
   console.log('This is my ID ' + event.id);
   console.log('This is my name ' + event.name);
-  if(path.basename(filePath).startsWith('renamed-')) {
+
+
+  if(path.basename(filePath).startsWith('resized-')) {
     console.log('this file has been renamed');
     return;
   }
@@ -31,9 +34,12 @@ exports.onFileChange = functions.storage.object().onFinalize(event => {
 
   return destBucket.file(filePath).download({
     destination: tmpFilePath
-}).then(() => {
-  return destBucket.upload(tmpFilePath, {
-    destination: 'renamed-' + path.basename(filePath),
+  }).then(() => {
+  return spawn('convert', [tmpFilePath, '-resize', '500X500', tmpFilePath])
+
+  }).then(() => {
+     return destBucket.upload(tmpFilePath, {
+    destination: 'resized-' + path.basename(filePath),
     metadata: metadata
   })
 });
