@@ -14,12 +14,12 @@ exports.onFileChange = functions.storage.object().onFinalize(event => {
   const filePath = event.name;
   console.log('File change detected, function excution started');
   console.log('This is my object' + object);
-  console.log('This is my bucket' + bucket);
-  console.log('This is my contentType' + contentType);
-  console.log('This is my filepath' + filePath);
-  console.log('This is my link' + event.selfLink);
-  console.log('This is my ID' + event.id);
-  console.log('This is my name' + event.name);
+  //console.log('This is my bucket' + bucket);
+  console.log('This is my contentType ' + contentType);
+  console.log('This is my filepath ' + filePath);
+  console.log('This is my link ' + event.selfLink);
+  console.log('This is my ID ' + event.id);
+  console.log('This is my name ' + event.name);
   if(path.basename(filePath).startsWith('renamed-')) {
     console.log('this file has been renamed');
     return;
